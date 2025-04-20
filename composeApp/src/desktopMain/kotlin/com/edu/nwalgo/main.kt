@@ -9,7 +9,6 @@ fun main() = application {
     Window(onCloseRequest = ::exitApplication, title = "Animated Matrix", resizable = true) {
         MaterialTheme {
             app()
-
         }
     }
 }

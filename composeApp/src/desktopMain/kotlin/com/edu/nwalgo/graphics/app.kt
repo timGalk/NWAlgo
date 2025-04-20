@@ -18,42 +18,32 @@ import com.edu.nwalgo.algo.needlemanWunsch
 
 @Composable
 @Preview
-fun app() {
-    var seq1 by remember { mutableStateOf("".uppercase()) }
-    var seq2 by remember { mutableStateOf("".uppercase()) }
 
-    var match by remember { mutableStateOf(1) }
-    var mismatch by remember { mutableStateOf(-1) }
-    var gap by remember { mutableStateOf(-2) }
-
-
-    val result = needlemanWunsch(seq1, seq2, match, mismatch, gap)
+fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
+    val result = viewModel.result
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .background(Color.White),
-
-        ) {
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Color.White)
+    ) {
         Text("Needleman-Wunsch Visualizer", fontSize = 24.sp)
 
         ResponsiveInputRow(
-            seq1 = seq1,
-            onSeq1Change = { seq1 = it.uppercase() },
-            seq2 = seq2,
-            onSeq2Change = { seq2 = it.uppercase() },
-            match = match,
-            onMatchChange = { match = it },
-            mismatch = mismatch,
-            onMismatchChange = { mismatch = it },
-            gap = gap,
-            onGapChange = { gap = it }
+            seq1 = viewModel.seq1,
+            onSeq1Change = viewModel::updateSeq1,
+            seq2 = viewModel.seq2,
+            onSeq2Change = viewModel::updateSeq2,
+            match = viewModel.match,
+            onMatchChange = viewModel::updateMatch,
+            mismatch = viewModel.mismatch,
+            onMismatchChange = viewModel::updateMismatch,
+            gap = viewModel.gap,
+            onGapChange = viewModel::updateGap
         )
 
         Spacer(Modifier.height(24.dp))
-
         Text("Score Matrix:", fontSize = 18.sp)
 
         LazyVerticalGrid(
