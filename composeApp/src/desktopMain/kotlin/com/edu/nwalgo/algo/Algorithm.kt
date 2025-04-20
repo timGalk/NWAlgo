@@ -1,5 +1,15 @@
 package com.edu.nwalgo.algo
-
+/**
+ * Implements the Needleman-Wunsch algorithm for sequence alignment.
+ *
+ * @param seq1 The first sequence to align.
+ * @param seq2 The second sequence to align.
+ * @param match The score for a match between characters in the sequences.
+ * @param mismatch The penalty for a mismatch between characters in the sequences.
+ * @param gap The penalty for introducing a gap in the alignment.
+ * @return An `AlignmentResult` object containing the aligned sequences, score matrix, alignment path,
+ *         identity percentage, gap count, and final alignment score.
+ */
 fun needlemanWunsch(
     seq1: String,
     seq2: String,
