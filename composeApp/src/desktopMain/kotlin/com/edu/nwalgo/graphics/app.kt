@@ -27,44 +27,30 @@ fun app() {
     var gap by remember { mutableStateOf(-2) }
 
 
-    val result = needlemanWunsch(seq1, seq2 , match, mismatch, gap)
+    val result = needlemanWunsch(seq1, seq2, match, mismatch, gap)
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .background(Color.White),
+
+        ) {
         Text("Needleman-Wunsch Visualizer", fontSize = 24.sp)
 
-        LazyRow(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
-                Text("Seq1:")
-                Spacer(Modifier.width(8.dp))
-                TextField(seq1, onValueChange = { seq1 = it })
-            }
-            item {
-                Spacer(Modifier.width(16.dp))
-                Text("Seq2:")
-                Spacer(Modifier.width(8.dp))
-                TextField(seq2, onValueChange = { seq2 = it })
-            }
-            item {
-                Text("Match:")
-                Spacer(Modifier.width(8.dp))
-                TextField(match.toString(), onValueChange = { match = it.toIntOrNull() ?: 1 })
-            }
-            item {
-                Spacer(Modifier.width(8.dp))
-                Text("Mismatch:")
-                Spacer(Modifier.width(8.dp))
-                TextField(mismatch.toString(), onValueChange = { mismatch = it.toIntOrNull() ?: -1 })
-            }
-            item {
-                Spacer(Modifier.width(8.dp))
-                Text("Gap:")
-                Spacer(Modifier.width(8.dp))
-                TextField(gap.toString(), onValueChange = { gap = it.toIntOrNull() ?: -2 })
-            }
-        }
+        ResponsiveInputRow(
+            seq1 = seq1,
+            onSeq1Change = { seq1 = it.uppercase() },
+            seq2 = seq2,
+            onSeq2Change = { seq2 = it.uppercase() },
+            match = match,
+            onMatchChange = { match = it },
+            mismatch = mismatch,
+            onMismatchChange = { mismatch = it },
+            gap = gap,
+            onGapChange = { gap = it }
+        )
 
         Spacer(Modifier.height(24.dp))
 
@@ -100,5 +86,49 @@ fun app() {
         Text(result.alignedSeq2)
         Text("Identity: %.2f%%".format(result.identityPercent))
         Text("Gaps: ${result.gapCount}, Final Score: ${result.score}")
+    }
+}
+
+
+
+@Composable
+fun ResponsiveInputRow(
+    seq1: String,
+    onSeq1Change: (String) -> Unit,
+    seq2: String,
+    onSeq2Change: (String) -> Unit,
+    match: Int,
+    onMatchChange: (Int) -> Unit,
+    mismatch: Int,
+    onMismatchChange: (Int) -> Unit,
+    gap: Int,
+    onGapChange: (Int) -> Unit
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        val isCompact = maxWidth < 700.dp
+        val layout: @Composable (@Composable () -> Unit) -> Unit =
+            if (isCompact) { content -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { content() } }
+            else { content -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) { content() } }
+
+        layout {
+            LabeledTextField("Seq1:", seq1, onSeq1Change)
+            LabeledTextField("Seq2:", seq2, onSeq2Change)
+            LabeledTextField("Match:", match.toString()) { onMatchChange(it.toIntOrNull() ?: 1) }
+            LabeledTextField("Mismatch:", mismatch.toString()) { onMismatchChange(it.toIntOrNull() ?: -1) }
+            LabeledTextField("Gap:", gap.toString()) { onGapChange(it.toIntOrNull() ?: -2) }
+        }
+    }
+}
+
+@Composable
+fun LabeledTextField(label: String, value: String, onChange: (String) -> Unit) {
+    Column(modifier = Modifier.widthIn(min = 100.dp, max = 160.dp)) {
+        Text(label)
+        TextField(
+            value = value,
+            onValueChange = onChange,
+            modifier = Modifier.fillMaxWidth()
+                .height(50.dp),
+        )
     }
 }

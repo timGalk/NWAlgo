@@ -6,7 +6,7 @@ import androidx.compose.ui.window.application
 import com.edu.nwalgo.graphics.app
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication, title = "Animated Matrix") {
+    Window(onCloseRequest = ::exitApplication, title = "Animated Matrix", resizable = true) {
         MaterialTheme {
             app()
 
