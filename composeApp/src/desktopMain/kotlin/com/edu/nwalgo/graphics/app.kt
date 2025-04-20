@@ -3,6 +3,7 @@ package com.edu.nwalgo.graphics
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Text
@@ -17,23 +18,52 @@ import com.edu.nwalgo.algo.needlemanWunsch
 
 @Composable
 @Preview
-fun App() {
-    var seq1 by remember { mutableStateOf("") }
-    var seq2 by remember { mutableStateOf("") }
+fun app() {
+    var seq1 by remember { mutableStateOf("".uppercase()) }
+    var seq2 by remember { mutableStateOf("".uppercase()) }
 
-    val result = needlemanWunsch(seq1, seq2 , 1, -1, -2)
+    var match by remember { mutableStateOf(1) }
+    var mismatch by remember { mutableStateOf(-1) }
+    var gap by remember { mutableStateOf(-2) }
+
+
+    val result = needlemanWunsch(seq1, seq2 , match, mismatch, gap)
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text("Needleman-Wunsch Visualizer", fontSize = 24.sp)
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Seq1:")
-            Spacer(Modifier.width(8.dp))
-            TextField(seq1, onValueChange = { seq1 = it })
-            Spacer(Modifier.width(16.dp))
-            Text("Seq2:")
-            Spacer(Modifier.width(8.dp))
-            TextField(seq2, onValueChange = { seq2 = it })
+        LazyRow(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                Text("Seq1:")
+                Spacer(Modifier.width(8.dp))
+                TextField(seq1, onValueChange = { seq1 = it })
+            }
+            item {
+                Spacer(Modifier.width(16.dp))
+                Text("Seq2:")
+                Spacer(Modifier.width(8.dp))
+                TextField(seq2, onValueChange = { seq2 = it })
+            }
+            item {
+                Text("Match:")
+                Spacer(Modifier.width(8.dp))
+                TextField(match.toString(), onValueChange = { match = it.toIntOrNull() ?: 1 })
+            }
+            item {
+                Spacer(Modifier.width(8.dp))
+                Text("Mismatch:")
+                Spacer(Modifier.width(8.dp))
+                TextField(mismatch.toString(), onValueChange = { mismatch = it.toIntOrNull() ?: -1 })
+            }
+            item {
+                Spacer(Modifier.width(8.dp))
+                Text("Gap:")
+                Spacer(Modifier.width(8.dp))
+                TextField(gap.toString(), onValueChange = { gap = it.toIntOrNull() ?: -2 })
+            }
         }
 
         Spacer(Modifier.height(24.dp))
