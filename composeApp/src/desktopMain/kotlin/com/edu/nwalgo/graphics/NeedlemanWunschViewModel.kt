@@ -7,6 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.edu.nwalgo.algo.AlignmentResult
 import com.edu.nwalgo.algo.needlemanWunsch
+import com.edu.nwalgo.fastaparser.parseFasta
+import java.awt.FileDialog
+import java.awt.Frame
+import java.io.File
 
 
 /**
@@ -84,4 +88,25 @@ class AlignmentViewModel : ViewModel() {
      * @param value The new gap penalty.
      */
     fun updateGap(value: Int) { gap = value }
+    /**
+     * Loads sequences from a FASTA file.
+     * The first sequence is assigned to `seq1`, and the second (if present) to `seq2`.
+     *
+     * @param file The FASTA file containing the sequences.
+     */
+    fun pickFastaFile(): File? {
+        val dialog = FileDialog(Frame(), "Choose FASTA File", FileDialog.LOAD)
+        dialog.isVisible = true
+        return dialog.files.firstOrNull()
+    }
+
+    fun loadFastaFromFile(file: File) {
+        val entries = parseFasta(file.readText())
+        if (entries.isNotEmpty()) {
+            seq1 = entries[0].sequence
+            if (entries.size > 1) {
+                seq2 = entries[1].sequence
+            }
+        }
+    }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
@@ -76,7 +77,18 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
         Text(result.alignedSeq2)
         Text("Identity: %.2f%%".format(result.identityPercent))
         Text("Gaps: ${result.gapCount}, Final Score: ${result.score}")
+        Spacer(Modifier.height(16.dp))
+        Text("Pick Fasta file ")
+        Button(
+            onClick = {
+                val file = viewModel.pickFastaFile()
+                file?.let {viewModel.loadFastaFromFile(it)}
+            }
+        ){
+            Text("Pick File")
+        }
     }
+
 }
 
 
