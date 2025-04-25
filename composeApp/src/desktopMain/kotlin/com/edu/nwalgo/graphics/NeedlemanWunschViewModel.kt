@@ -58,7 +58,9 @@ class AlignmentViewModel : ViewModel() {
      *
      * @param value The new value for the first sequence.
      */
-    fun updateSeq1(value: String) { seq1 = value.uppercase() }
+    fun updateSeq1(value: String) {
+        seq1 = value.uppercase()
+    }
 
     /**
      * Updates the second sequence to be aligned.
@@ -66,28 +68,37 @@ class AlignmentViewModel : ViewModel() {
      *
      * @param value The new value for the second sequence.
      */
-    fun updateSeq2(value: String) { seq2 = value.uppercase() }
+    fun updateSeq2(value: String) {
+        seq2 = value.uppercase()
+    }
 
     /**
      * Updates the match score.
      *
      * @param value The new match score.
      */
-    fun updateMatch(value: Int) { match = value }
+    fun updateMatch(value: Int) {
+        match = value
+    }
 
     /**
      * Updates the mismatch penalty.
      *
      * @param value The new mismatch penalty.
      */
-    fun updateMismatch(value: Int) { mismatch = value }
+    fun updateMismatch(value: Int) {
+        mismatch = value
+    }
 
     /**
      * Updates the gap penalty.
      *
      * @param value The new gap penalty.
      */
-    fun updateGap(value: Int) { gap = value }
+    fun updateGap(value: Int) {
+        gap = value
+    }
+
     /**
      * Loads sequences from a FASTA file.
      * The first sequence is assigned to `seq1`, and the second (if present) to `seq2`.
@@ -100,13 +111,35 @@ class AlignmentViewModel : ViewModel() {
         return dialog.files.firstOrNull()
     }
 
-    fun loadFastaFromFile(file: File) {
+    /**
+     * Loads the first sequence from a FASTA file and assigns it to `seq1`.
+     *
+     * @param file The FASTA file containing the sequence.
+     * @throws Exception If no sequence is found in the file.
+     */
+    fun loadFastaFromFileSeq1(file: File) {
         val entries = parseFasta(file.readText())
         if (entries.isNotEmpty()) {
             seq1 = entries[0].sequence
-            if (entries.size > 1) {
-                seq2 = entries[1].sequence
-            }
+        } else {
+            throw Exception("No sequence found")
         }
     }
+
+    /**
+     * Loads the second sequence from a FASTA file and assigns it to `seq2`.
+     *
+     * @param file The FASTA file containing the sequence.
+     * @throws Exception If no sequence is found in the file.
+     */
+    fun loadFastaFromFileSeq2(file: File) {
+        val entries = parseFasta(file.readText())
+        if (entries.isNotEmpty()) {
+            seq2 = entries[0].sequence
+        } else {
+            throw Exception("No sequence found")
+        }
+    }
+    // TODO: return warning that sequence is too large and  say that current algorithm isn't effective for that
+    // TODO: if FASTA file contains more than one sequence -> warning to check
 }

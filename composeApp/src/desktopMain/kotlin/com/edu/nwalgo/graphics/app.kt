@@ -30,6 +30,8 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
             .background(Color.White)
     ) {
         Text("Needleman-Wunsch Visualizer", fontSize = 24.sp)
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Type you sequences(or choose a FASTA file)  and parameters to start ")
 
         ResponsiveInputRow(
             seq1 = viewModel.seq1,
@@ -43,6 +45,27 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
             gap = viewModel.gap,
             onGapChange = viewModel::updateGap
         )
+
+        Text("Pick Fasta file for first sequence:")
+        Button(
+            onClick = {
+                val file = viewModel.pickFastaFile()
+                file?.let {viewModel.loadFastaFromFileSeq1(it)}
+            }
+        ){
+            Text("Pick File")
+        }
+
+        Text("Pick Fasta file for second sequence:")
+        Button(
+            onClick = {
+                val file = viewModel.pickFastaFile()
+                file?.let {viewModel.loadFastaFromFileSeq2(it)}
+            }
+        ){
+            Text("Pick File")
+        }
+
 
         Spacer(Modifier.height(24.dp))
         Text("Score Matrix:", fontSize = 18.sp)
@@ -78,15 +101,7 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
         Text("Identity: %.2f%%".format(result.identityPercent))
         Text("Gaps: ${result.gapCount}, Final Score: ${result.score}")
         Spacer(Modifier.height(16.dp))
-        Text("Pick Fasta file ")
-        Button(
-            onClick = {
-                val file = viewModel.pickFastaFile()
-                file?.let {viewModel.loadFastaFromFile(it)}
-            }
-        ){
-            Text("Pick File")
-        }
+
     }
 
 }
@@ -110,7 +125,8 @@ fun ResponsiveInputRow(
         val isCompact = maxWidth < 700.dp
         val layout: @Composable (@Composable () -> Unit) -> Unit =
             if (isCompact) { content -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { content() } }
-            else { content -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) { content() } }
+            else { content -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically) { content() } }
 
         layout {
             LabeledTextField("Seq1:", seq1, onSeq1Change)
