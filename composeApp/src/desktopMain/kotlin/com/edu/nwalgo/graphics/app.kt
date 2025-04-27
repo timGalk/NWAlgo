@@ -3,19 +3,17 @@ package com.edu.nwalgo.graphics
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edu.nwalgo.algo.needlemanWunsch
 import com.edu.nwalgo.graphics.elements.ResponsiveInputRow
 
 @Composable
@@ -36,24 +34,47 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
 
         ResponsiveInputRow(viewModel)
 
-        Text("Pick Fasta file for first sequence:")
+        var isErrorDialogVisible by remember { mutableStateOf(false) }
+        var errorMessage by remember { mutableStateOf("") }
+
         Button(
             onClick = {
-                val file = viewModel.pickFastaFile()
-                file?.let {viewModel.loadFastaFromFileSeq1(it)}
+                try {
+                    val file = viewModel.pickFastaFile()
+                    file.let { viewModel.loadFastaFromFileSeq1(it) }
+                } catch (e: Exception) {
+                    errorMessage = e.message ?: "Unknown error"
+                    isErrorDialogVisible = true
+                }
             }
-        ){
-            Text("Pick File")
+        ) {
+            Text("Pick File for Seq1")
         }
 
-        Text("Pick Fasta file for second sequence:")
+        if (isErrorDialogVisible) {
+            AlertDialog(
+                onDismissRequest = { isErrorDialogVisible = false },
+                title = { Text("Error") },
+                text = { Text("Failed to load file: $errorMessage") },
+                confirmButton = {
+                    Button(onClick = { isErrorDialogVisible = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
         Button(
             onClick = {
-                val file = viewModel.pickFastaFile()
-                file?.let {viewModel.loadFastaFromFileSeq2(it)}
+                try {
+                    val file = viewModel.pickFastaFile()
+                    file.let { viewModel.loadFastaFromFileSeq2(it) }
+                } catch (e: Exception) {
+                    errorMessage = e.message ?: "Unknown error"
+                    isErrorDialogVisible = true
+                }
             }
-        ){
-            Text("Pick File")
+        ) {
+            Text("Pick File for Seq2")
         }
 
 
