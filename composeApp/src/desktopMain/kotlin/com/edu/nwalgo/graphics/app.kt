@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edu.nwalgo.algo.needlemanWunsch
+import com.edu.nwalgo.graphics.elements.ResponsiveInputRow
 
 @Composable
 @Preview
@@ -33,18 +34,7 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
         Spacer(modifier = Modifier.height(16.dp))
         Text("Type you sequences(or choose a FASTA file)  and parameters to start ")
 
-        ResponsiveInputRow(
-            seq1 = viewModel.seq1,
-            onSeq1Change = viewModel::updateSeq1,
-            seq2 = viewModel.seq2,
-            onSeq2Change = viewModel::updateSeq2,
-            match = viewModel.match,
-            onMatchChange = viewModel::updateMatch,
-            mismatch = viewModel.mismatch,
-            onMismatchChange = viewModel::updateMismatch,
-            gap = viewModel.gap,
-            onGapChange = viewModel::updateGap
-        )
+        ResponsiveInputRow(viewModel)
 
         Text("Pick Fasta file for first sequence:")
         Button(
@@ -69,7 +59,6 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
 
         Spacer(Modifier.height(24.dp))
         Text("Score Matrix:", fontSize = 18.sp)
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(result.scoreMatrix[0].size),
             modifier = Modifier.heightIn(max = 400.dp).padding(8.dp),
@@ -94,6 +83,8 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
             }
         }
 
+
+
         Spacer(Modifier.height(16.dp))
         Text("Alignment Result:", fontSize = 18.sp)
         Text(result.alignedSeq1)
@@ -107,46 +98,3 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
 }
 
 
-
-@Composable
-fun ResponsiveInputRow(
-    seq1: String,
-    onSeq1Change: (String) -> Unit,
-    seq2: String,
-    onSeq2Change: (String) -> Unit,
-    match: Int,
-    onMatchChange: (Int) -> Unit,
-    mismatch: Int,
-    onMismatchChange: (Int) -> Unit,
-    gap: Int,
-    onGapChange: (Int) -> Unit
-) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-        val isCompact = maxWidth < 700.dp
-        val layout: @Composable (@Composable () -> Unit) -> Unit =
-            if (isCompact) { content -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { content() } }
-            else { content -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically) { content() } }
-
-        layout {
-            LabeledTextField("Seq1:", seq1, onSeq1Change)
-            LabeledTextField("Seq2:", seq2, onSeq2Change)
-            LabeledTextField("Match:", match.toString()) { onMatchChange(it.toIntOrNull() ?: 1) }
-            LabeledTextField("Mismatch:", mismatch.toString()) { onMismatchChange(it.toIntOrNull() ?: -1) }
-            LabeledTextField("Gap:", gap.toString()) { onGapChange(it.toIntOrNull() ?: -2) }
-        }
-    }
-}
-
-@Composable
-fun LabeledTextField(label: String, value: String, onChange: (String) -> Unit) {
-    Column(modifier = Modifier.widthIn(min = 100.dp, max = 160.dp)) {
-        Text(label)
-        TextField(
-            value = value,
-            onValueChange = onChange,
-            modifier = Modifier.fillMaxWidth()
-                .height(50.dp),
-        )
-    }
-}

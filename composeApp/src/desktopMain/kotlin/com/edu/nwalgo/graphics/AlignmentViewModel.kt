@@ -23,81 +23,73 @@ class AlignmentViewModel : ViewModel() {
      * The first sequence to be aligned.
      */
     var seq1 by mutableStateOf("")
+        private set
 
     /**
      * The second sequence to be aligned.
      */
     var seq2 by mutableStateOf("")
+        private set
 
-    /**
-     * The score for a match between characters in the sequences.
-     */
     var match by mutableStateOf(1)
-
-    /**
-     * The penalty for a mismatch between characters in the sequences.
-     */
+        private set
     var mismatch by mutableStateOf(-1)
-
-    /**
-     * The penalty for introducing a gap in the alignment.
-     */
+        private set
     var gap by mutableStateOf(-2)
+        private set
 
-    /**
-     * Computes the alignment result using the Needleman-Wunsch algorithm.
-     *
-     * @return The result of the alignment, including the score matrix, aligned sequences, and other details.
-     */
     val result: AlignmentResult
         get() = needlemanWunsch(seq1, seq2, match, mismatch, gap)
 
-    /**
-     * Updates the first sequence to be aligned.
-     * Converts the input to uppercase for consistency.
-     *
-     * @param value The new value for the first sequence.
-     */
-    fun updateSeq1(value: String) {
-        seq1 = value.uppercase()
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
+
+    fun updateSeq1(newSeq: String?) {
+        if(newSeq == null || !newSeq.all { it.isLetter() }){
+            errorMessage = "Please enter a valid sequence (letters only)"
+            return
+        }
+        seq1 = newSeq.uppercase()
+        errorMessage = null
+
+
+    }
+    fun updateSeq2(newSeq: String?) {
+        if(newSeq == null|| !newSeq.all { it.isLetter() }){
+            errorMessage = "Please enter a valid sequence (letters only)"
+            return
+        }
+        seq2 = newSeq.uppercase()
+        errorMessage = null
+
+
     }
 
-    /**
-     * Updates the second sequence to be aligned.
-     * Converts the input to uppercase for consistency.
-     *
-     * @param value The new value for the second sequence.
-     */
-    fun updateSeq2(value: String) {
-        seq2 = value.uppercase()
+    fun updateMatch(newMatch: Int?) {
+        if(newMatch == null){
+            errorMessage = "Match score must be an integer"
+            return
+        }
+        match = newMatch
+        errorMessage = null
+    }
+    fun updateMismatch(newMismatch: Int?) {
+        if(newMismatch == null){
+            errorMessage = "Mismatch score must be an integer"
+            return
+        }
+        mismatch = newMismatch
+    }
+    fun updateGap(newGap: Int?) {
+        if(newGap == null){
+            errorMessage = "Gap score must be an integer"
+            return
+        }
+        gap = newGap
+        errorMessage = null
     }
 
-    /**
-     * Updates the match score.
-     *
-     * @param value The new match score.
-     */
-    fun updateMatch(value: Int) {
-        match = value
-    }
 
-    /**
-     * Updates the mismatch penalty.
-     *
-     * @param value The new mismatch penalty.
-     */
-    fun updateMismatch(value: Int) {
-        mismatch = value
-    }
-
-    /**
-     * Updates the gap penalty.
-     *
-     * @param value The new gap penalty.
-     */
-    fun updateGap(value: Int) {
-        gap = value
-    }
 
     /**
      * Loads sequences from a FASTA file.
@@ -119,11 +111,13 @@ class AlignmentViewModel : ViewModel() {
      */
     fun loadFastaFromFileSeq1(file: File) {
         val entries = parseFasta(file.readText())
-        if (entries.isNotEmpty()) {
-            seq1 = entries[0].sequence
-        } else {
-            throw Exception("No sequence found")
-        }
+
+
+//        if (entries.isNotEmpty()) {
+//            seq1 = entries[0].sequence
+//        } else {
+//            throw Exception("No sequence found")
+//        }
     }
 
     /**
@@ -140,6 +134,5 @@ class AlignmentViewModel : ViewModel() {
             throw Exception("No sequence found")
         }
     }
-    // TODO: return warning that sequence is too large and  say that current algorithm isn't effective for that
     // TODO: if FASTA file contains more than one sequence -> warning to check
 }
