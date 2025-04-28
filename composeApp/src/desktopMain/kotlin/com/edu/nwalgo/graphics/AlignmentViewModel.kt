@@ -41,52 +41,60 @@ class AlignmentViewModel : ViewModel() {
     val result: AlignmentResult
         get() = needlemanWunsch(seq1, seq2, match, mismatch, gap)
 
-    var errorMessage by mutableStateOf<String?>(null)
+    var errorMessageSeq2 by mutableStateOf<String?>(null)
+        private set
+    var errorMessageSeq1 by mutableStateOf<String?>(null)
+    var errorMessageMatch by mutableStateOf<String?>(null)
+        private set
+    var errorMessageMismatch by mutableStateOf<String?>(null)
+        private set
+    var errorMessageGap by mutableStateOf<String?>(null)
         private set
 
     fun updateSeq1(newSeq: String?) {
         if(newSeq == null || !newSeq.all { it.isLetter() }){
-            errorMessage = "Please enter a valid sequence (letters only)"
+            errorMessageSeq1 = "Please enter a valid sequence (letters only)"
             return
         }
         seq1 = newSeq.uppercase()
-        errorMessage = null
+        errorMessageSeq1 = null
 
 
     }
     fun updateSeq2(newSeq: String?) {
         if(newSeq == null|| !newSeq.all { it.isLetter() }){
-            errorMessage = "Please enter a valid sequence (letters only)"
+            errorMessageSeq2 = "Please enter a valid sequence (letters only)"
             return
         }
         seq2 = newSeq.uppercase()
-        errorMessage = null
+        errorMessageSeq2 = null
 
 
     }
 
     fun updateMatch(newMatch: Int?) {
         if(newMatch == null){
-            errorMessage = "Match score must be an integer"
+            errorMessageMatch = "Match score must be an integer"
             return
         }
         match = newMatch
-        errorMessage = null
+        errorMessageMatch = null
     }
     fun updateMismatch(newMismatch: Int?) {
         if(newMismatch == null){
-            errorMessage = "Mismatch score must be an integer"
+            errorMessageMismatch = "Mismatch score must be an integer"
             return
         }
         mismatch = newMismatch
+        errorMessageMismatch = null
     }
     fun updateGap(newGap: Int?) {
         if(newGap == null){
-            errorMessage = "Gap score must be an integer"
+            errorMessageGap= "Gap score must be an integer"
             return
         }
         gap = newGap
-        errorMessage = null
+        errorMessageGap = null
     }
 
     fun pickFastaFile(): File {
@@ -126,7 +134,7 @@ class AlignmentViewModel : ViewModel() {
                 throw Exception("No sequences found in file: ${file.name}")
             }
         } catch (e: Exception) {
-            throw Exception("Error while loading FASTA file '${file?.name}': ${e.message}", e)
+            throw Exception("Error while loading FASTA file '${file.name}': ${e.message}", e)
         }
     }
 
@@ -141,7 +149,7 @@ class AlignmentViewModel : ViewModel() {
                 throw Exception("No sequences found in file: ${file.name}")
             }
         } catch (e: Exception) {
-            throw Exception("Error while loading FASTA file '${file?.name}': ${e.message}", e)
+            throw Exception("Error while loading FASTA file '${file.name}': ${e.message}", e)
         }
     }
 

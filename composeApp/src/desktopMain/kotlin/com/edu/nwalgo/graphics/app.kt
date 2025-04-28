@@ -34,6 +34,8 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
 
         ResponsiveInputRow(viewModel)
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         var isErrorDialogVisible by remember { mutableStateOf(false) }
         var errorMessage by remember { mutableStateOf("") }
 

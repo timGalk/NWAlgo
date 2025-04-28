@@ -3,7 +3,7 @@ package com.edu.nwalgo.graphics.elements
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,9 +26,11 @@ fun ResponsiveInputRow(viewModel: AlignmentViewModel) {
             }
 
         layout {
-            ValidatedTextField("Seq 1", viewModel.seq1,viewModel.errorMessage, viewModel::updateSeq1)
-            ValidatedTextField("Seq 2", viewModel.seq2,viewModel.errorMessage, viewModel::updateSeq2)
-            ValidatedIntField("Match", viewModel.match, viewModel.errorMessage, viewModel::updateMatch)
+            ValidatedTextField("Seq 1", viewModel.seq1,viewModel.errorMessageSeq1, viewModel::updateSeq1)
+            ValidatedTextField("Seq 2", viewModel.seq2,viewModel.errorMessageSeq2, viewModel::updateSeq2)
+            ValidatedIntField("Match", viewModel.match, viewModel.errorMessageMatch, viewModel::updateMatch)
+            ValidatedIntField("Mismatch", viewModel.mismatch, viewModel.errorMessageMismatch, viewModel::updateMismatch)
+            ValidatedIntField("Gap", viewModel.gap, viewModel.errorMessageGap, viewModel::updateGap)
         }
     }
 }
@@ -69,26 +71,35 @@ fun ValidatedTextField(
 @Composable
 fun ValidatedIntField(
     label: String,
-    value: Int,
+    value: Int?,
     error: String?,
     onValueChange: (Int?) -> Unit
 ) {
+    var text by remember { mutableStateOf(value?.toString() ?: "") }
+
+    LaunchedEffect(value) {
+        if (value?.toString() != text) {
+            text = value?.toString() ?: ""
+        }
+    }
+
     Column(modifier = Modifier.widthIn(min = 100.dp, max = 160.dp)) {
         Text(label)
         TextField(
-            value = value.toString(),
+            value = text,
             onValueChange = { input ->
+                text = input
                 val intValue = input.toIntOrNull()
                 onValueChange(intValue)
             },
-            isError = error != null,
+            isError = error != null || text.isEmpty(), // mark empty field also as error
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
         )
-        if (error != null) {
+        if (error != null || text.isEmpty()) {
             Text(
-                text = error,
+                text = error ?: "Value required",
                 color = Color.Red,
                 fontSize = 12.sp
             )
