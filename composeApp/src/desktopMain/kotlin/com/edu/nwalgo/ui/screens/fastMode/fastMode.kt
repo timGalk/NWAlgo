@@ -1,5 +1,6 @@
 package com.edu.nwalgo.ui.screens.fastMode
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -7,20 +8,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edu.nwalgo.graphics.FastModeViewModel
+import com.edu.nwalgo.backend.fastMode.FastModeViewModel
 
-
+@Preview
+@Composable
 fun fastMode(
-    viewModel: FastModeViewModel = remember { FastModeViewModel() },
+    viewModel:FastModeViewModel = remember { FastModeViewModel() },
     onBack: () -> Unit = {}
 
 ) {

@@ -1,4 +1,4 @@
-package com.edu.nwalgo.algo
+package com.edu.nwalgo.backend.algo
 
 
 /**
