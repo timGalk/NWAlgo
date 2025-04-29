@@ -17,7 +17,7 @@ import java.io.File
  * ViewModel for managing the state and logic of the Needleman-Wunsch alignment algorithm.
  * This ViewModel holds the input sequences, scoring parameters, and computes the alignment result.
  */
-class AlignmentViewModel : ViewModel() {
+class FastModeViewModel : ViewModel() {
 
     /**
      * The first sequence to be aligned.

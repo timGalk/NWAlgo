@@ -8,7 +8,7 @@ fun main(){
 
     val seq1 = "GATTACATERERERERERERERERERERERERERERERERERERERERERERERERERERERERERECECCECEREEC"
     val seq2 = "GATTACATERERERERERERERERDDDDDDTRERERERERERERERERERERERERERERERERERERERERERECECCECEREEC"
-    val result = needlemanWunsch(seq1, seq2, 10, -1, -2)
+    val result =  needlemanWunsch(seq1, seq2, 10, -1, -2)
     val matrix = result.scoreMatrix// твоя сгенерированная матрица из алгоритма
     val path = result.path   // твой путь выравнивания из алгоритма
 

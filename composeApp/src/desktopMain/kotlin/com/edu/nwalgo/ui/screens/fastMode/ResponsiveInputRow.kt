@@ -1,4 +1,4 @@
-package com.edu.nwalgo.graphics.elements
+package com.edu.nwalgo.ui.screens.fastMode
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edu.nwalgo.graphics.AlignmentViewModel
+import com.edu.nwalgo.graphics.FastModeViewModel
 
 @Composable
-fun ResponsiveInputRow(viewModel: AlignmentViewModel) {
+fun ResponsiveInputRow(viewModel: FastModeViewModel) {
 
     BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
         val isCompactLayout = maxWidth < 700.dp
