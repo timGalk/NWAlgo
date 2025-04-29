@@ -1,7 +1,5 @@
 package com.edu.nwalgo.ui.screens.reportMode
 
-import com.edu.nwalgo.ui.screens.fastMode.ResponsiveInputRow
-
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,13 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edu.nwalgo.backend.fastMode.FastModeViewModel
+import com.edu.nwalgo.backend.reportMode.ReportModeViewModel
+import com.edu.nwalgo.ui.screens.elements.ResponsiveInputRow
 
 @Composable
 @Preview
 
 fun reportMode(
-    viewModel: FastModeViewModel = remember { FastModeViewModel() },
+    viewModel: ReportModeViewModel = remember { ReportModeViewModel() },
     onBack: () -> Unit = {}
 
 ) {

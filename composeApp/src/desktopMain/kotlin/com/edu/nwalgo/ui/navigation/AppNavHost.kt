@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edu.nwalgo.ui.screens.fastMode.fastMode
+import com.edu.nwalgo.ui.screens.reportMode.reportMode
 
 /**
  * A composable function that serves as the main navigation host for the application.
@@ -43,7 +44,7 @@ fun AppNavHost() {
         }
 
         is Screen.Report -> {
-            ReportModeScreen(onBack = { currentScreen = Screen.ModelSelection })
+            reportMode(onBack = { currentScreen = Screen.ModelSelection })
         }
 
         else -> {}

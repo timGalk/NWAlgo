@@ -1,25 +1,25 @@
 package com.edu.nwalgo.backend.fastMode
 
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import com.edu.nwalgo.backend.algo.AlignmentResult
-import com.edu.nwalgo.backend.algo.needlemanWunsch
 import com.edu.nwalgo.backend.commonViewModel.CommonView
-import com.edu.nwalgo.backend.fastaparser.FastaEntry
-import java.awt.FileDialog
-import java.awt.Frame
-import java.io.File
 
 
 /**
- * ViewModel for managing the state and logic of the Needleman-Wunsch alignment algorithm.
- * This ViewModel holds the input sequences, scoring parameters, and computes the alignment result.
+ * FastModeViewModel is responsible for handling and validating sequence inputs
+ * and managing file-based sequence loading within a fast mode operation.
+ * It extends from CommonView to reuse shared functionalities and state.
  */
 class FastModeViewModel : CommonView() {
 
+    /**
+     * Updates the value of `seq1` with the provided input after validating it.
+     * The input must contain only letters, and its length must not exceed 20 characters.
+     * If the input fails validation, an appropriate error message is set.
+     *
+     * @param newSeq The new sequence to be assigned to `seq1`. It should be a string containing
+     *               only alphabetical characters and be no more than 20 characters long. If this
+     *               parameter is null or invalid, an error message is updated instead.
+     */
     override fun updateSeq1(newSeq: String?) {
         if (newSeq == null || !newSeq.all { it.isLetter() }) {
             errorMessageSeq1 = "Please enter a valid sequence (letters only)"
@@ -34,6 +34,13 @@ class FastModeViewModel : CommonView() {
 
     }
 
+    /**
+     * Updates the sequence `seq2` based on the input provided.
+     * Validates the input to ensure it only contains alphabetic characters and meets length constraints.
+     * Converts the sequence to uppercase when valid. In case of invalid input, sets appropriate error messages.
+     *
+     * @param newSeq the new sequence to set for `seq2`. Can be null.
+     */
     override fun updateSeq2(newSeq: String?) {
         if (newSeq == null || !newSeq.all { it.isLetter() }) {
             errorMessageSeq2 = "Please enter a valid sequence (letters only)"
@@ -49,33 +56,6 @@ class FastModeViewModel : CommonView() {
     }
 
 
-    override fun loadFastaFromFileSeq1(file: File?) {
-        if (file == null) throw IllegalArgumentException("No file selected.")
-        try {
-            val entries = parseFasta(file.readText())
-            if (entries.isNotEmpty()) {
-                updateSeq1(entries[0].sequence)
-            } else {
-                throw Exception("No sequences found in file: ${file.name}")
-            }
-        } catch (e: Exception) {
-            throw Exception("Error while loading FASTA file '${file.name}': ${e.message}", e)
-        }
-    }
 
-
-    override fun loadFastaFromFileSeq2(file: File?) {
-        if (file == null) throw IllegalArgumentException("No file selected.")
-        try {
-            val entries = parseFasta(file.readText())
-            if (entries.isNotEmpty()) {
-                updateSeq2(entries[0].sequence)
-            } else {
-                throw Exception("No sequences found in file: ${file.name}")
-            }
-        } catch (e: Exception) {
-            throw Exception("Error while loading FASTA file '${file.name}': ${e.message}", e)
-        }
-    }
 
 }

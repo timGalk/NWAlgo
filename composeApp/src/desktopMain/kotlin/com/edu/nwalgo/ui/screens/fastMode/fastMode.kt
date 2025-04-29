@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edu.nwalgo.backend.fastMode.FastModeViewModel
+import com.edu.nwalgo.ui.screens.elements.ResponsiveInputRow
 
 @Preview
 @Composable
