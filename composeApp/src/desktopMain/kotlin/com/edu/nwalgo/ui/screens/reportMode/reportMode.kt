@@ -23,7 +23,8 @@ fun reportMode(
 
 ) {
     val result = viewModel.result
-
+    var showImageSavedDialog by remember { mutableStateOf(false) }
+    var showPdfExportedDialog by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,36 +93,48 @@ fun reportMode(
         Spacer(Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
+            // Button to save the alignment image
             Button(onClick = {
                 viewModel.exportAlignmentImageToPNG()
+                showImageSavedDialog = true // Show dialog after image save action
             }) {
                 Text("Save Image")
-//                AlertDialog(
-//                    onDismissRequest = { isErrorDialogVisible = false },
-//                    title = { Text("Image Saved") },
-//                    text = { Text("The image has been saved successfully. Find it in results folder") },
-//                    confirmButton = {
-//                        Button(onClick = { isErrorDialogVisible = false }) {
-//                            Text("OK")
-//                        }
-//                    }
-//                )
             }
 
+            // Conditionally display the "Image Saved" dialog
+            if (showImageSavedDialog) {
+                AlertDialog(
+                    onDismissRequest = { showImageSavedDialog = false },
+                    title = { Text("Image Saved") },
+                    text = { Text("The image has been saved successfully. Find it in the results folder.") },
+                    confirmButton = {
+                        Button(onClick = { showImageSavedDialog = false }) {
+                            Text("OK")
+                        }
+                    }
+                )
+            }
+
+            // Button to export the PDF report
             Button(onClick = {
                 viewModel.exportAlignmentReportToPDF()
+                showPdfExportedDialog = true // Show dialog after PDF export action
             }) {
                 Text("Export PDF Report")
-//                AlertDialog(
-//                    onDismissRequest = { isErrorDialogVisible = false },
-//                    title = { Text("PDF Report Exported") },
-//                    text = { Text("The PDF report has been exported successfully. Find it in results folder") },
-//                    confirmButton = {
-//                        Button(onClick = { isErrorDialogVisible = false }) {
-//                            Text("OK")
-//                        }
-//                    }
-//                )
+            }
+
+            // Conditionally display the "PDF Exported" dialog
+            if (showPdfExportedDialog) {
+                AlertDialog(
+                    onDismissRequest = { showPdfExportedDialog = false },
+                    title = { Text("PDF Report Exported") },
+                    text = { Text("The PDF report has been exported successfully. Find it in the results folder.") },
+                    confirmButton = {
+                        Button(onClick = { showPdfExportedDialog = false }) {
+                            Text("OK")
+                        }
+                    }
+                )
             }
         }
 
