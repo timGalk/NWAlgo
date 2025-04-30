@@ -8,8 +8,7 @@ This project is a Kotlin-based desktop application that visualizes the Needleman
 
 - **Interactive UI**: Built with Jetpack Compose for Desktop.
 - **Sequence Alignment**: Implements the Needleman-Wunsch algorithm.
-- **PDF Export**: Generate detailed alignment reports in PDF format (saves data in the folder of progrmm 'results').*Availible in **report** mode*
-- **PNG Export**: Generate detailed 
+- **PDF Export**: Generate detailed alignment reports in PDF format.
 - **Cross-Platform**: Supports Windows, macOS, and Linux.
 
 ## Requirements
@@ -20,10 +19,6 @@ This project is a Kotlin-based desktop application that visualizes the Needleman
   - Jetpack Compose for Desktop
   - Apache PDFBox
   - iText
-
-## Instalation 
-Download **MSI** file from [releases](https://github.com/timGalk/NWAlgo/releases)
-Run a programm as admin 
 
 ## Build and Run
 
@@ -38,5 +33,3 @@ Run a programm as admin
    ```bash
    git clone <repository-url>
    cd composeApp
-
-
