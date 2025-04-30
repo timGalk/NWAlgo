@@ -29,7 +29,6 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation("org.apache.pdfbox:pdfbox:2.0.1")
             implementation("com.lowagie:itext:2.1.7")
         }
     }
