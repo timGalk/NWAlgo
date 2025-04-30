@@ -17,6 +17,16 @@ import androidx.compose.ui.unit.sp
 import com.edu.nwalgo.backend.fastMode.FastModeViewModel
 import com.edu.nwalgo.ui.screens.elements.ResponsiveInputRow
 
+/**
+ * A composable function designed for fast sequence alignment and visualization using the Needleman-Wunsch algorithm.
+ * This function integrates with a `FastModeViewModel` to manage sequence inputs, validate parameters,
+ * and handle file loading. It also provides a visual representation of the computed score matrix
+ * and alignment results.
+ *
+ * @param viewModel The view model of type `FastModeViewModel` that manages the state and logic for the view.
+ *                  Defaults to a new instance created with `remember`.
+ * @param onBack A callback function triggered when the "Back" button is clicked. Defaults to an empty lambda.
+ */
 @Preview
 @Composable
 fun fastMode(

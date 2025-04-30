@@ -14,6 +14,15 @@ import androidx.compose.ui.unit.sp
 import com.edu.nwalgo.backend.reportMode.ReportModeViewModel
 import com.edu.nwalgo.ui.screens.elements.ResponsiveInputRow
 
+/**
+ * Displays the Report Mode screen for the Needleman-Wunsch Visualizer. This composable allows users
+ * to input sequences or load them from FASTA files, modify scoring parameters, view alignment results,
+ * and export the results as an image or a PDF report. Additional dialogs are shown for user feedback
+ * (e.g., file errors, successful exports).
+ *
+ * @param viewModel The ViewModel instance that manages the state and logic of the report mode. Defaults to a new instance of ReportModeViewModel.
+ * @param onBack The callback function to be executed when the back button is clicked. Defaults to an empty lambda.
+ */
 @Composable
 @Preview
 

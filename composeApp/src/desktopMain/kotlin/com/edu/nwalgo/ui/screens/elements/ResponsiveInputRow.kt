@@ -11,6 +11,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edu.nwalgo.backend.commonViewModel.CommonView
 
+/**
+ * Renders a responsive input row that adapts its layout based on the available screen size.
+ * On compact screens, the inputs are displayed in a vertical column layout, and on larger screens,
+ * they are displayed in a horizontal row layout. The inputs are tied to a view model for state management.
+ *
+ * @param viewModel The view model of type CommonView, providing the state and logic for input fields and their validation.
+ */
 @Composable
 fun ResponsiveInputRow(viewModel: CommonView) {
 
@@ -36,6 +43,16 @@ fun ResponsiveInputRow(viewModel: CommonView) {
 }
 
 
+/**
+ * A composable function that displays a labeled text field with validation feedback.
+ * The text field indicates whether the input is valid or invalid and shows an error message if applicable.
+ *
+ * @param label The label text displayed above the text field.
+ * @param value The current value of the text field.
+ * @param error The error message to display if the input is invalid, or null if the input is valid.
+ * @param onValueChange A lambda function that is invoked when the value of the text field changes,
+ * accepting the updated text as a parameter.
+ */
 @Composable
 fun ValidatedTextField(
     label: String,
@@ -68,6 +85,15 @@ fun ValidatedTextField(
         }
     }
 }
+/**
+ * A composable function for an input field that validates and displays integer values,
+ * providing feedback on valid or invalid input.
+ *
+ * @param label The label text to display above the input field.
+ * @param value The current integer value of the input field. Can be `null` for no value.
+ * @param error The error message to display when the input is invalid. Can be `null` if there is no error.
+ * @param onValueChange Callback invoked when the input value changes. Passes the new integer value or `null` if invalid.
+ */
 @Composable
 fun ValidatedIntField(
     label: String,
