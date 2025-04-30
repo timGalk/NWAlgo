@@ -1,4 +1,4 @@
-package com.edu.nwalgo.graphics
+package com.edu.nwalgo.ui.screens.fastMode
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
@@ -14,12 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edu.nwalgo.graphics.elements.ResponsiveInputRow
+import com.edu.nwalgo.backend.fastMode.FastModeViewModel
+import com.edu.nwalgo.ui.screens.elements.ResponsiveInputRow
 
-@Composable
 @Preview
+@Composable
+fun fastMode(
+    viewModel:FastModeViewModel = remember { FastModeViewModel() },
+    onBack: () -> Unit = {}
 
-fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
+) {
     val result = viewModel.result
 
     Column(
@@ -115,9 +119,11 @@ fun app(viewModel: AlignmentViewModel = remember { AlignmentViewModel() }) {
         Text("Identity: %.2f%%".format(result.identityPercent))
         Text("Gaps: ${result.gapCount}, Final Score: ${result.score}")
         Spacer(Modifier.height(16.dp))
+        Button(onClick = onBack, modifier = Modifier.padding(top = 16.dp)) {
+            Text("Back")
+        }
+
 
     }
 
 }
-
-

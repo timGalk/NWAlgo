@@ -1,11 +1,35 @@
-This is a Kotlin Multiplatform project targeting Desktop.
+# Animated Matrix - Needleman-Wunsch Alignment Tool
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+## Overview
 
+This project is a Kotlin-based desktop application that visualizes the Needleman-Wunsch algorithm for sequence alignment. It provides an interactive interface and allows exporting alignment reports to PDF.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## Features
+
+- **Interactive UI**: Built with Jetpack Compose for Desktop.
+- **Sequence Alignment**: Implements the Needleman-Wunsch algorithm.
+- **PDF Export**: Generate detailed alignment reports in PDF format.
+- **Cross-Platform**: Supports Windows, macOS, and Linux.
+
+## Requirements
+
+- **Kotlin**: Multiplatform setup with JVM target.
+- **Gradle**: Build system with Kotlin DSL.
+- **Dependencies**:
+  - Jetpack Compose for Desktop
+  - Apache PDFBox
+  - iText
+
+## Build and Run
+
+### Prerequisites
+
+1. Install [JDK 17+](https://adoptopenjdk.net/).
+2. Install [Gradle](https://gradle.org/).
+
+### Steps
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd composeApp
