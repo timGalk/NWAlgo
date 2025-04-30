@@ -3,13 +3,10 @@ package com.edu.nwalgo.ui.screens.reportMode
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -33,7 +30,7 @@ fun reportMode(
             .padding(16.dp)
             .background(Color.White)
     ) {
-        Text("Needleman-Wunsch Visualizer", fontSize = 24.sp)
+        Text("Needleman-Wunsch Visualizer Report Mode ", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
         Text("Type you sequences(or choose a FASTA file)  and parameters to start ")
 
@@ -86,47 +83,53 @@ fun reportMode(
 
 
         Spacer(Modifier.height(24.dp))
-        Text("Score Matrix:", fontSize = 18.sp)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(result.scoreMatrix[0].size),
-            modifier = Modifier.heightIn(max = 400.dp).padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            result.scoreMatrix.forEachIndexed { i, row ->
-                row.forEachIndexed { j, cell ->
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    if (result.path.contains(i to j)) Color.Green.copy(alpha = 0.3f) else Color.LightGray
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(cell.toString(), fontSize = 14.sp)
-                        }
-                    }
-                }
-            }
-        }
 
-
-
-        Spacer(Modifier.height(16.dp))
         Text("Alignment Result:", fontSize = 18.sp)
         Text(result.alignedSeq1)
         Text(result.alignedSeq2)
         Text("Identity: %.2f%%".format(result.identityPercent))
         Text("Gaps: ${result.gapCount}, Final Score: ${result.score}")
         Spacer(Modifier.height(16.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+
+            Button(onClick = {
+                viewModel.exportAlignmentImageToPNG()
+            }) {
+                Text("Save Image")
+//                AlertDialog(
+//                    onDismissRequest = { isErrorDialogVisible = false },
+//                    title = { Text("Image Saved") },
+//                    text = { Text("The image has been saved successfully. Find it in results folder") },
+//                    confirmButton = {
+//                        Button(onClick = { isErrorDialogVisible = false }) {
+//                            Text("OK")
+//                        }
+//                    }
+//                )
+            }
+
+            Button(onClick = {
+                viewModel.exportAlignmentReportToPDF()
+            }) {
+                Text("Export PDF Report")
+//                AlertDialog(
+//                    onDismissRequest = { isErrorDialogVisible = false },
+//                    title = { Text("PDF Report Exported") },
+//                    text = { Text("The PDF report has been exported successfully. Find it in results folder") },
+//                    confirmButton = {
+//                        Button(onClick = { isErrorDialogVisible = false }) {
+//                            Text("OK")
+//                        }
+//                    }
+//                )
+            }
+        }
+
         Button(onClick = onBack, modifier = Modifier.padding(top = 16.dp)) {
             Text("Back")
         }
 
-
     }
-
 }
 
 

@@ -1,8 +1,14 @@
 package com.edu.nwalgo.backend.reportMode
 
+import DocumentManager
 import com.edu.nwalgo.backend.commonViewModel.CommonView
+import java.awt.image.BufferedImage
+import java.io.File
+import javax.imageio.ImageIO
 
 class ReportModeViewModel : CommonView() {
+
+    val documentManager = DocumentManager()
 
     override fun updateSeq1(newSeq: String?) {
         if (newSeq == null || !newSeq.all { it.isLetter() }) {
@@ -23,9 +29,14 @@ class ReportModeViewModel : CommonView() {
         errorMessageSeq2 = null
 
     }
-    fun createPicture() {
-        // Implement the logic to create a picture
-        renderMatrixToImage(seq1, seq2,result.scoreMatrix,result.path)
+
+    fun exportAlignmentReportToPDF() {
+        documentManager.exportAlignmentReportToPDF(result)
     }
+    fun exportAlignmentImageToPNG() {
+       documentManager.exportMatrixImageToFile(seq1, seq2,result.scoreMatrix, result.path)
+    }
+
+
 
 }
