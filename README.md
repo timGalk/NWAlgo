@@ -33,3 +33,7 @@ This project is a Kotlin-based desktop application that visualizes the Needleman
    ```bash
    git clone <repository-url>
    cd composeApp
+
+### Instalation 
+Download **MSI** file from [releases](https://github.com/timGalk/NWAlgo/releases)
+Run a programm as admin 
