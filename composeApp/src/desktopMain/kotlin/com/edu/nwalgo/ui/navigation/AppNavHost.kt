@@ -1,13 +1,6 @@
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.edu.nwalgo.ui.screens.fastMode.fastMode
+import com.edu.nwalgo.ui.screens.msaMode.MSAmode
 import com.edu.nwalgo.ui.screens.reportMode.reportMode
 
 /**
@@ -34,18 +27,21 @@ fun AppNavHost() {
                 currentScreen = when (selectedMode) {
                     AlignmentMode.QuickVisual -> Screen.QuickVisual(selectedMode)
                     AlignmentMode.Report -> Screen.Report(selectedMode)
+                    AlignmentMode.MSA -> Screen.MSA(selectedMode)
                 }
             }
         }
 
 
         is Screen.QuickVisual -> {
-            fastMode  (onBack = { currentScreen = Screen.ModelSelection })
+            fastMode(onBack = { currentScreen = Screen.ModelSelection })
         }
 
         is Screen.Report -> {
             reportMode(onBack = { currentScreen = Screen.ModelSelection })
         }
+
+        is Screen.MSA -> {MSAmode(onBack = { currentScreen = Screen.ModelSelection })}
 
         else -> {}
     }
@@ -87,20 +83,8 @@ sealed class Screen {
      * how elements within the report are aligned.
      */
     data class Report(val mode: AlignmentMode) : Screen()
+
+    data class MSA(val mode: AlignmentMode) : Screen()
 }
 
 
-/**
- * Composable function that represents the Report Mode screen.
- *
- * @param onBack A lambda function that will be invoked when the back button is clicked.
- */
-@Composable
-fun ReportModeScreen(onBack: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Report Mode", fontSize = 24.sp)
-        Button(onClick = onBack, modifier = Modifier.padding(top = 16.dp)) {
-            Text("Back")
-        }
-    }
-}
