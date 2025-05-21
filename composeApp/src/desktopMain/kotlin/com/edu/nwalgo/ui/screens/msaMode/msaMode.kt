@@ -14,6 +14,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.edu.nwalgo.backend.msa.MSAModeViewModel
+import java.awt.Desktop
+import java.awt.FileDialog
+import java.awt.Frame
+import java.io.File
+
 
 @Composable
 fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBack: () -> Unit) {
@@ -40,11 +45,22 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
             OutlinedTextField(
                 value = value,
                 onValueChange = { updated ->
-                    sequenceInputs = sequenceInputs.toMutableList().also { it[index] = updated }
+                    val upperText = updated.text.uppercase()
+                    val isValid = upperText.all { it.isLetter() || it == '-' }
+
+                    if (isValid) {
+                        sequenceInputs = sequenceInputs.toMutableList().also {
+                            it[index] = updated.copy(text = upperText)
+                        }
+                    } else {
+                        showErrorDialog = true
+                        errorMessage = "Only letters A-Z and '-' are allowed."
+                    }
                 },
                 label = { Text("Sequence ${index + 1}") },
                 modifier = Modifier.fillMaxWidth()
             )
+
         }
 
         Button(onClick = {
@@ -55,7 +71,7 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
         Text("Or")
 
         Button(onClick = {
-            val fileDialog = java.awt.FileDialog(null as java.awt.Frame?, "Select FASTA File", java.awt.FileDialog.LOAD)
+            val fileDialog = FileDialog(null as Frame?, "Select FASTA File", FileDialog.LOAD)
             fileDialog.isVisible = true
             val file = fileDialog.files.firstOrNull()
             if (file != null) {
@@ -115,20 +131,44 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
 
 
         }
-
-        alignmentResult?.let { result ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Aligned Sequences:", style = MaterialTheme.typography.h6)
-            result.alignedSequences.forEach { seq ->
-                Text(seq, style = MaterialTheme.typography.body2)
+        if (alignmentResult != null) {
+            Text("Alignment Result:", style = MaterialTheme.typography.h6)
+            alignmentResult?.alignedSequences?.forEachIndexed { index, sequence ->
+                Text("Sequence ${index + 1}: $sequence")
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Identity: ${"%.2f".format(result.identity)}%")
-            Text("Gaps: ${result.gapCount}")
-            Text("Score: ${result.score}")
-
-            Text("Alignment Result: ${result.alignedSequences.size}", style = MaterialTheme.typography.h6)
+            Text("Identity: %.2f%%".format(alignmentResult?.identity))
+            Text("Gaps: ${alignmentResult?.gapCount}, Final Score: ${alignmentResult?.score}")
+        } else {
+            Text("No alignment result available.")
         }
+
+
+        val svgFile = File("output/svg", "alignment.svg")
+        alignmentResult?.alignedSequences?.let {
+            viewModel.generateAlignmentSVG(it, svgFile.parent, svgFile.name)
+        }
+
+        Button(onClick = {
+            if (svgFile.exists()) {
+                Desktop.getDesktop().browse(svgFile.toURI())
+            } else {
+                println("SVG file not found at: ${svgFile.absolutePath}")
+            }
+        }) {
+            Text("Open Alignment SVG")
+        }
+
+        Button(onClick = {
+            alignmentResult?.let { result ->
+                viewModel.showMSAVisualization(result.alignedSequences)
+            } ?: run {
+                showErrorDialog = true
+                errorMessage = "No alignment result available."
+            }
+        }) {
+            Text("Show MSA Visualization")
+        }
+
 
         Button(onClick = onBack, modifier = Modifier.padding(top = 16.dp)) {
             Text("Back")
@@ -180,7 +220,16 @@ fun ScoreControl(
                 Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase")
             }
         }
+
+
     }
 }
+
+
+
+
+
+
+
 
 
