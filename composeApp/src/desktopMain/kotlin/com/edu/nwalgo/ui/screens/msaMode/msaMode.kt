@@ -115,6 +115,9 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
 
 
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Before every calculation, please make sure that the sequences are in the same format and contain only letters A-Z and '-'." +
+                "\n" + "And click Align to start the alignment process.")
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = {
@@ -144,12 +147,18 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
 
 
         val svgFile = File("output/svg", "alignment.svg")
-        alignmentResult?.alignedSequences?.let {
-            viewModel.generateAlignmentSVG(it, svgFile.parent, svgFile.name)
-        }
+
 
         Button(onClick = {
+            alignmentResult?.alignedSequences?.let {
+                viewModel.generateAlignmentSVG(it, svgFile.parent, svgFile.name)
+            } ?: run {
+                showErrorDialog = true
+                errorMessage = "No alignment result available."
+            }
+
             if (svgFile.exists()) {
+
                 Desktop.getDesktop().browse(svgFile.toURI())
             } else {
                 println("SVG file not found at: ${svgFile.absolutePath}")
@@ -160,7 +169,7 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
 
         Button(onClick = {
             alignmentResult?.let { result ->
-                viewModel.showMSAVisualization(result.alignedSequences)
+                viewModel.showMSAVisualization(result.alignedSequences, alignmentResult!!.identity)
             } ?: run {
                 showErrorDialog = true
                 errorMessage = "No alignment result available."

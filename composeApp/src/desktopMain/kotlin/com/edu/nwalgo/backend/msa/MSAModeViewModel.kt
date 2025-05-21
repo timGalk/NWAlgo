@@ -14,8 +14,7 @@ import org.w3c.dom.Document
 import java.awt.*
 import java.io.File
 import java.io.FileWriter
-import javax.swing.JFrame
-import javax.swing.JPanel
+import javax.swing.*
 
 class MSAModeViewModel: ViewModel() {
 
@@ -221,48 +220,95 @@ class MSAModeViewModel: ViewModel() {
         println("SVG saved to: ${filePath.absolutePath}")
     }
 
-    fun showMSAVisualization(alignedSequences: List<String>) {
-        if (alignedSequences.isEmpty()) return // Prevent exception on empty input
+    fun showMSAVisualization(alignedSequences: List<String>, similarityPercent: Double) {
+        if (alignedSequences.isEmpty()) return
 
         val rows = alignedSequences.size
         val cols = alignedSequences.maxOf { it.length }
         val cellSize = 40
+        val fontSize = 18
 
-        val frame = JFrame("MSA Visualization")
-        frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-        frame.setSize(cols * cellSize + 100, rows * cellSize + 100)
-        frame.isResizable = false
+        var matches = 0
+        var validCols = 0
+        for (j in 0 until cols) {
+            val column = alignedSequences.mapNotNull { it.getOrNull(j) }.filter { it != '-' }
+            if (column.isNotEmpty()) {
+                validCols++
+                if (column.distinct().size == 1) matches++
+            }
+        }
 
-        frame.contentPane = object : JPanel() {
+        val panel = object : JPanel() {
+            override fun getPreferredSize(): Dimension {
+                return Dimension(cols * cellSize + 100, rows * cellSize + 100)
+            }
+
             override fun paintComponent(g: Graphics) {
                 super.paintComponent(g)
                 val g2 = g as Graphics2D
-                g2.font = Font("JetBrains Mono", Font.PLAIN, 18)
+                g2.font = Font("JetBrains Mono", Font.PLAIN, fontSize)
 
                 for (i in 0 until rows) {
                     val seq = alignedSequences[i]
                     for (j in 0 until cols) {
                         val c = if (j < seq.length) seq[j] else ' '
-                        // Determine color
                         val isGap = c == '-'
                         val isMatch = !isGap && alignedSequences.all { it.length > j && it[j] == c }
+
+                        val x = j * cellSize + 50
+                        val y = i * cellSize + 50
+
                         g2.color = when {
                             isGap -> Color.LIGHT_GRAY
                             isMatch -> Color(144, 238, 144)
                             else -> Color(255, 182, 193)
                         }
-                        val x = j * cellSize + 50
-                        val y = i * cellSize + 50
+
                         g2.fillRect(x, y, cellSize, cellSize)
                         g2.color = Color.BLACK
                         g2.drawRect(x, y, cellSize, cellSize)
-                        g2.drawString(c.toString(), x + cellSize / 3, y + cellSize / 2 + 10)
+                        g2.drawString(c.toString(), x + cellSize / 3, y + cellSize / 2 + 6)
                     }
                 }
             }
         }
+
+        val scrollPane = JScrollPane(panel)
+        scrollPane.preferredSize = Dimension(800, 600)
+
+        // Identity label
+        val identityLabel = JLabel("Identity: %.2f%%".format(similarityPercent))
+        identityLabel.font = Font("SansSerif", Font.BOLD, 16)
+        identityLabel.horizontalAlignment = SwingConstants.CENTER
+        identityLabel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
+
+        val container = JPanel(BorderLayout())
+        container.add(identityLabel, BorderLayout.NORTH)
+        container.add(scrollPane, BorderLayout.CENTER)
+
+        val frame = JFrame("MSA Visualization")
+        frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        frame.contentPane = container
+        frame.pack()
+        frame.setLocationRelativeTo(null)
         frame.isVisible = true
     }
+
+    fun saveAlignmentResultToFile(result: MultipleAlignmentResult, file: File) {
+        file.printWriter().use { out ->
+            out.println("Multiple Sequence Alignment Result")
+            out.println("=================================")
+            result.alignedSequences.forEachIndexed { idx, seq ->
+                out.println("Sequence ${idx + 1}: $seq")
+            }
+            out.println()
+            out.println("Identity: %.2f%%".format(result.identity))
+            out.println("Gaps: ${result.gapCount}")
+            out.println("Final Score: ${result.score}")
+        }
+    }
+
+
 
 
 
