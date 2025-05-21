@@ -18,6 +18,15 @@ import java.awt.FileDialog
 import java.awt.Frame
 
 
+/**
+ * A composable function for Multiple Sequence Alignment (MSA) mode in the application.
+ * This screen allows users to input or upload sequences, configure scoring parameters,
+ * perform sequence alignment, and visualize or export alignment results.
+ *
+ * @param viewModel An instance of [MSAModeViewModel] used to handle the alignment logic and manage state.
+ *                  Defaults to a newly initialized [MSAModeViewModel] with `remember`.
+ * @param onBack A lambda function to handle the back navigation when the "Back" button is clicked.
+ */
 @Composable
 fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBack: () -> Unit) {
     val alignmentResult by viewModel.alignmentResult.collectAsState()
@@ -200,6 +209,14 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
     }
 }
 
+/**
+ * A composable function for controlling and displaying a score with increment and decrement options.
+ *
+ * @param label The label associated with the score control.
+ * @param value The current value of the score.
+ * @param onChange A lambda function invoked when the score value changes. Provides the new score value.
+ * @param modifier A [Modifier] to be applied to this layout, allowing for customization.
+ */
 @Composable
 fun ScoreControl(
     label: String,

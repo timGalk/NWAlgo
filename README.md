@@ -57,5 +57,6 @@ Run a programm as **admin**
 The lenght of sequences is limited to 20 characters.There aren't oppurtunity to have a detailed report.
 ### Report mode
 The lenght of sequences is unlimited. There are oppurtunity to have a detailed report in PDF format and PNG image. **Warning:** The report will be saved in the folder of program 'results'. Launch the program as admin to have a permission to save the report in this folder. The report will be saved in the folder of program 'results'. Launch the program as admin to have a permission to save the report in this folder.
-
+### MSA mode
+The lenght of sequences is unlimited. There are oppurtunity to have a detailed report in PDF format and PNG image. **Warning:** The report will be saved in the folder of program 'results'. Launch the program as admin to have a permission to save the report in this folder. The report will be saved in the folder of program 'results'. Launch the program as admin to have a permission to save the report in this folder.
 
