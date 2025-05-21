@@ -24,6 +24,10 @@ This project is a Kotlin-based desktop application that visualizes the Needleman
 Download **MSI** file from [releases](https://github.com/timGalk/NWAlgo/releases)
 Run a programm as **admin**
 
+
+<img src="https://github.com/user-attachments/assets/f67122ec-ac75-48ac-a1a5-173aa4bc5493" width="300" /> <img src="https://github.com/user-attachments/assets/77bdc836-8dbf-4048-bac6-d9cb6adf3425" width="300" />
+
+
 ## Build and Run
 ### Prerequisites
 
@@ -53,4 +57,5 @@ Run a programm as **admin**
 The lenght of sequences is limited to 20 characters.There aren't oppurtunity to have a detailed report.
 ### Report mode
 The lenght of sequences is unlimited. There are oppurtunity to have a detailed report in PDF format and PNG image. **Warning:** The report will be saved in the folder of program 'results'. Launch the program as admin to have a permission to save the report in this folder. The report will be saved in the folder of program 'results'. Launch the program as admin to have a permission to save the report in this folder.
+
 
