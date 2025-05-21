@@ -3,18 +3,33 @@ package com.edu.nwalgo.backend.msa
 import androidx.lifecycle.ViewModel
 import com.edu.nwalgo.backend.algo.AlignmentResult
 import com.edu.nwalgo.backend.algo.needlemanWunsch
+import com.edu.nwalgo.backend.fastaparser.FastaEntry
 import com.edu.nwalgo.backend.multipleseqaligner.MultipleAlignmentResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.awt.FileDialog
+import java.awt.Frame
+import java.io.File
 
 class MSAModeViewModel: ViewModel() {
 
+    private var  _sequenceInputs = MutableStateFlow<List<String>>(emptyList())
     private val _alignmentResult = MutableStateFlow<MultipleAlignmentResult?>(null)
     val alignmentResult: StateFlow<MultipleAlignmentResult?> = _alignmentResult
 
-    private val match = 1
-    private val mismatch = -1
-    private val gap = -1
+    private var match = 1
+    private var  mismatch = -1
+    private var gap = -1
+
+    fun updateMatchScore(newMatch: Int) {
+        match = newMatch
+    }
+    fun updateMismatchScore(newMismatch: Int) {
+        mismatch = newMismatch
+    }
+    fun updateGapScore(newGap: Int) {
+        gap = newGap
+    }
 
     fun alignSequences(sequences: List<String>) {
         if (sequences.size < 2) return
@@ -116,4 +131,49 @@ class MSAModeViewModel: ViewModel() {
 
         return totalScore
     }
+
+    fun pickFastaFile(): File {
+        val fileDialog = FileDialog(null as Frame?, "Select FASTA File", FileDialog.LOAD).apply {
+            isVisible = true
+        }
+        return fileDialog.files.firstOrNull()
+            ?: throw IllegalArgumentException("No file selected.")
+    }
+    fun loadFirstFastaSequence(file: File): String {
+        val content = file.readText()
+        val entries = parseFasta(content)
+        if (entries.isEmpty()) throw Exception("No sequences found in file.")
+        return entries[0].sequence
+    }
+
+    fun pickFastaFile(context: Any? = null) {
+        try {
+            val file = pickFastaFile()
+            val sequence = loadFirstFastaSequence(file)
+            _alignmentResult.value = null // сброс результата
+            _sequenceInputs.value = listOf(sequence) // обновляем одну последовательность
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+        }
+    }
+
+    fun parseFasta(content: String): List<FastaEntry> {
+        return content.trim().split(">").filter { it.isNotBlank() }.map { entry ->
+            val lines = entry.lines().filter { it.isNotBlank() }
+            val header = lines.first().trim()
+            val sequence = lines.drop(1).joinToString("").replace("\\s".toRegex(), "").uppercase()
+            if (sequence.isBlank()) throw IllegalArgumentException("Empty sequence for header: $header")
+            FastaEntry(header, sequence)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 }

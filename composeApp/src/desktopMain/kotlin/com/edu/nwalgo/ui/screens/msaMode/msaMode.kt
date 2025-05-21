@@ -1,73 +1,124 @@
 package com.edu.nwalgo.ui.screens.msaMode
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.edu.nwalgo.backend.msa.MSAModeViewModel
-
 
 @Composable
 fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBack: () -> Unit) {
     val alignmentResult by viewModel.alignmentResult.collectAsState()
     var sequenceInputs by remember { mutableStateOf(listOf(TextFieldValue())) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    var gapPenalty by remember { mutableStateOf(0) }
+    var matchScore by remember { mutableStateOf(1) }
+    var mismatchScore by remember { mutableStateOf(-1) }
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Multiple Sequence Alignment", style = MaterialTheme.typography.h3)
+        Text("Multiple Sequence Alignment", style = MaterialTheme.typography.h4)
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(sequenceInputs.size) { index ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    BasicTextField(
-                        value = sequenceInputs[index],
-                        onValueChange = { updated ->
-                            sequenceInputs = sequenceInputs.toMutableList().also { it[index] = updated }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .height(56.dp)
-                            .border(1.dp, MaterialTheme.colors .primary, MaterialTheme.shapes.medium)
-                            .padding(8.dp)
-                    )
-                }
+        sequenceInputs.forEachIndexed { index, value ->
+            OutlinedTextField(
+                value = value,
+                onValueChange = { updated ->
+                    sequenceInputs = sequenceInputs.toMutableList().also { it[index] = updated }
+                },
+                label = { Text("Sequence ${index + 1}") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Button(onClick = {
+            sequenceInputs = sequenceInputs + TextFieldValue()
+        }) {
+            Text("+ Add Sequence")
+        }
+        Text("Or")
+
+        Button(onClick = {
+            val fileDialog = java.awt.FileDialog(null as java.awt.Frame?, "Select FASTA File", java.awt.FileDialog.LOAD)
+            fileDialog.isVisible = true
+            val file = fileDialog.files.firstOrNull()
+            if (file != null) {
+                val fastaSequence = viewModel.loadFirstFastaSequence(file)
+                sequenceInputs = sequenceInputs + TextFieldValue(fastaSequence)
             }
+        }) {
+            Text(" + Load FASTA File")
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                ScoreControl(
+                    label = "Match",
+                    value = matchScore,
+                    onChange = {
+                        matchScore = it
+                        viewModel.updateMatchScore(it)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                ScoreControl(
+                    label = "Mismatch",
+                    value = mismatchScore,
+                    onChange = {
+                        mismatchScore = it
+                        viewModel.updateMismatchScore(it)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                ScoreControl(
+                    label = "Gap Penalty",
+                    value = gapPenalty,
+                    onChange = {
+                        gapPenalty = it
+                        viewModel.updateGapScore(it)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = {
-                sequenceInputs = sequenceInputs + TextFieldValue()
-            }) {
-                Text("+ Add Sequence")
-            }
-
-            Button(onClick = {
                 val sequences = sequenceInputs.map { it.text.trim() }.filter { it.isNotEmpty() }
-                viewModel.alignSequences(sequences)
+                if (sequences.size >= 2) {
+                    viewModel.alignSequences(sequences)
+                } else {
+                    showErrorDialog = true
+                    errorMessage = "Enter at least two sequences."
+                }
             }) {
                 Text("Align")
             }
+
+
         }
 
         alignmentResult?.let { result ->
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Aligned Sequences:", style = MaterialTheme.typography.h4)
+            Text("Aligned Sequences:", style = MaterialTheme.typography.h6)
             result.alignedSequences.forEach { seq ->
                 Text(seq, style = MaterialTheme.typography.body2)
             }
@@ -75,6 +126,52 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
             Text("Identity: ${"%.2f".format(result.identity)}%")
             Text("Gaps: ${result.gapCount}")
             Text("Score: ${result.score}")
+        }
+
+        if (showErrorDialog) {
+            AlertDialog(
+                onDismissRequest = { showErrorDialog = false },
+                title = { Text("Error") },
+                text = { Text(errorMessage) },
+                confirmButton = {
+                    TextButton(onClick = { showErrorDialog = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ScoreControl(
+    label: String,
+    value: Int,
+    onChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = label, style = MaterialTheme.typography.subtitle2)
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            IconButton(onClick = { onChange(value - 1) }) {
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease")
+            }
+            Text(
+                text = value.toString(),
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.width(36.dp),
+                textAlign = TextAlign.Center
+            )
+            IconButton(onClick = { onChange(value + 1) }) {
+                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase")
+            }
         }
     }
 }
