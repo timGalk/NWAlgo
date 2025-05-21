@@ -13,7 +13,7 @@ import java.io.File
 
 class MSAModeViewModel: ViewModel() {
 
-    private var  _sequenceInputs = MutableStateFlow<List<String>>(emptyList())
+    private var _sequenceInputs = MutableStateFlow<List<String>>(emptyList())
     private val _alignmentResult = MutableStateFlow<MultipleAlignmentResult?>(null)
     val alignmentResult: StateFlow<MultipleAlignmentResult?> = _alignmentResult
 
@@ -144,17 +144,6 @@ class MSAModeViewModel: ViewModel() {
         val entries = parseFasta(content)
         if (entries.isEmpty()) throw Exception("No sequences found in file.")
         return entries[0].sequence
-    }
-
-    fun pickFastaFile(context: Any? = null) {
-        try {
-            val file = pickFastaFile()
-            val sequence = loadFirstFastaSequence(file)
-            _alignmentResult.value = null // сброс результата
-            _sequenceInputs.value = listOf(sequence) // обновляем одну последовательность
-        } catch (e: Exception) {
-            println("Error: ${e.message}")
-        }
     }
 
     fun parseFasta(content: String): List<FastaEntry> {

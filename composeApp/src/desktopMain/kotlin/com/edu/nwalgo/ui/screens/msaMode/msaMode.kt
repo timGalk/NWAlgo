@@ -22,7 +22,7 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    var gapPenalty by remember { mutableStateOf(0) }
+    var gapPenalty by remember { mutableStateOf(-2) }
     var matchScore by remember { mutableStateOf(1) }
     var mismatchScore by remember { mutableStateOf(-1) }
 
@@ -126,7 +126,14 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
             Text("Identity: ${"%.2f".format(result.identity)}%")
             Text("Gaps: ${result.gapCount}")
             Text("Score: ${result.score}")
+
+            Text("Alignment Result: ${result.alignedSequences.size}", style = MaterialTheme.typography.h6)
         }
+
+        Button(onClick = onBack, modifier = Modifier.padding(top = 16.dp)) {
+            Text("Back")
+        }
+
 
         if (showErrorDialog) {
             AlertDialog(

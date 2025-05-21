@@ -3,6 +3,8 @@ package com.edu.nwalgo.ui.screens.reportMode
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -39,6 +41,8 @@ fun reportMode(
             .fillMaxSize()
             .padding(16.dp)
             .background(Color.White)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text("Needleman-Wunsch Visualizer Report Mode ", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))

@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -30,7 +32,7 @@ import com.edu.nwalgo.ui.screens.elements.ResponsiveInputRow
 @Preview
 @Composable
 fun fastMode(
-    viewModel:FastModeViewModel = remember { FastModeViewModel() },
+    viewModel: FastModeViewModel = remember { FastModeViewModel() },
     onBack: () -> Unit = {}
 
 ) {
@@ -41,6 +43,8 @@ fun fastMode(
             .fillMaxSize()
             .padding(16.dp)
             .background(Color.White)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text("Needleman-Wunsch Visualizer", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
