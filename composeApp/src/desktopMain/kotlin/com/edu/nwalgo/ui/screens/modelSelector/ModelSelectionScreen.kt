@@ -36,6 +36,12 @@ fun ModelSelectionScreen(onModeSelected: (AlignmentMode) -> Unit) {
             description = "For long sequences. Generates an image of the matrix and a report file.",
             onClick = { onModeSelected(AlignmentMode.Report) }
         )
+
+        ModeOption(
+            title = "Multiple Sequence Alignment (MSA)",
+            description = "Align multiple sequences simultaneously.",
+            onClick = { onModeSelected(AlignmentMode.MSA) }
+        )
     }
 }
 
@@ -93,5 +99,12 @@ enum class AlignmentMode {
      * @property mode The alignment mode used to determine how content within the report
      * is displayed or aligned.
      */
-    Report
+    Report,
+
+    /**
+     * Represents a multiple sequence alignment (MSA) mode.
+     *
+     * This mode is used for aligning multiple sequences simultaneously.
+     */
+    MSA
 }

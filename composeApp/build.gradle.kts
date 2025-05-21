@@ -30,6 +30,11 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation("com.lowagie:itext:2.1.7")
+            // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-dom
+            implementation("org.apache.xmlgraphics:batik-dom:1.19")
+            // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-svggen
+            implementation("org.apache.xmlgraphics:batik-svggen:1.19")
+
         }
     }
 }

@@ -257,7 +257,7 @@ open class CommonView : ViewModel() {
      *         The sequence is normalized to uppercase and stripped of whitespace.
      * @throws IllegalArgumentException If the content is malformed (e.g., missing headers, empty sequences, or invalid format).
      */
-    fun parseFasta(content: String): List<FastaEntry> {
+     fun parseFasta(content: String): List<FastaEntry> {
         return content.trim().split(">").filter { it.isNotBlank() }.map { entry ->
             val lines = entry.lines().filter { it.isNotBlank() }
             if (lines.isEmpty()) throw IllegalArgumentException("Malformed FASTA: missing header or sequence.")
