@@ -46,8 +46,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.edu.nwalgo"
-            packageVersion = "1.0.0"
+            packageName = "BioInfoTools"
+            packageVersion = "1.1.0"
         }
     }
 }
