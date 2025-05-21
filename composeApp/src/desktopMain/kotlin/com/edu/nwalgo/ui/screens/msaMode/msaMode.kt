@@ -14,10 +14,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.edu.nwalgo.backend.msa.MSAModeViewModel
-import java.awt.Desktop
 import java.awt.FileDialog
 import java.awt.Frame
-import java.io.File
 
 
 @Composable
@@ -116,8 +114,10 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
 
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Before every calculation, please make sure that the sequences are in the same format and contain only letters A-Z and '-'." +
-                "\n" + "And click Align to start the alignment process.")
+        Text(
+            "Before every calculation, please make sure that the sequences are in the same format and contain only letters A-Z and '-'." +
+                    "\n" + "And click Align to start the alignment process."
+        )
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = {
@@ -145,37 +145,38 @@ fun MSAmode(viewModel: MSAModeViewModel = remember { MSAModeViewModel() }, onBac
             Text("No alignment result available.")
         }
 
-
-        val svgFile = File("output/svg", "alignment.svg")
-
-
         Button(onClick = {
             alignmentResult?.alignedSequences?.let {
-                viewModel.generateAlignmentSVG(it, svgFile.parent, svgFile.name)
+                viewModel.exportAlignmentImageToSVG()
             } ?: run {
                 showErrorDialog = true
                 errorMessage = "No alignment result available."
             }
 
-            if (svgFile.exists()) {
-
-                Desktop.getDesktop().browse(svgFile.toURI())
-            } else {
-                println("SVG file not found at: ${svgFile.absolutePath}")
-            }
         }) {
-            Text("Open Alignment SVG")
+            Text("Save Alignment Image")
         }
 
         Button(onClick = {
             alignmentResult?.let { result ->
-                viewModel.showMSAVisualization(result.alignedSequences, alignmentResult!!.identity)
+                viewModel.showVisualization()
             } ?: run {
                 showErrorDialog = true
                 errorMessage = "No alignment result available."
             }
         }) {
             Text("Show MSA Visualization")
+        }
+
+        Button(onClick = {
+            alignmentResult?.let { result ->
+                viewModel.exportAlignmentReportToPDF()
+            } ?: run {
+                showErrorDialog = true
+                errorMessage = "No alignment result available."
+            }
+        }) {
+            Text("Crate Report")
         }
 
 

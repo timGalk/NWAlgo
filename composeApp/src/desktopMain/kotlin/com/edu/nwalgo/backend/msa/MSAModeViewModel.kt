@@ -1,5 +1,6 @@
 package com.edu.nwalgo.backend.msa
 
+import DocumentManager
 import androidx.lifecycle.ViewModel
 import com.edu.nwalgo.backend.algo.AlignmentResult
 import com.edu.nwalgo.backend.algo.needlemanWunsch
@@ -7,16 +8,11 @@ import com.edu.nwalgo.backend.fastaparser.FastaEntry
 import com.edu.nwalgo.backend.multipleseqaligner.MultipleAlignmentResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.apache.batik.dom.GenericDOMImplementation
-import org.apache.batik.svggen.SVGGraphics2D
-import org.w3c.dom.DOMImplementation
-import org.w3c.dom.Document
-import java.awt.*
 import java.io.File
-import java.io.FileWriter
-import javax.swing.*
 
 class MSAModeViewModel: ViewModel() {
+
+    private val DocumentManager = DocumentManager()
 
     private val _alignmentResult = MutableStateFlow<MultipleAlignmentResult?>(null)
     val alignmentResult: StateFlow<MultipleAlignmentResult?> = _alignmentResult
@@ -150,163 +146,26 @@ class MSAModeViewModel: ViewModel() {
             FastaEntry(header, sequence)
         }
     }
-    fun generateAlignmentSVG(alignment: List<String>, outputDir: String, fileName: String) {
-        val cellSize = 40
-        val padding = 10
-        val fontSize = 18
 
-        val rows = alignment.size
-        val cols = alignment.firstOrNull()?.length ?: 0
-
-        val width = cols * cellSize + padding * 2
-        val height = rows * cellSize + padding * 2
-
-        // Prepare output directory
-        val dir = File(outputDir)
-        if (!dir.exists()) {
-            dir.mkdirs()
-        }
-
-        val filePath = File(dir, fileName)
-
-        // Create SVG document
-        val domImpl: DOMImplementation = GenericDOMImplementation.getDOMImplementation()
-        val document: Document = domImpl.createDocument(null, "svg", null)
-        val svgGenerator = SVGGraphics2D(document)
-
-        svgGenerator.setSVGCanvasSize(Dimension(width, height))
-        svgGenerator.font = Font("JetBrains Mono", Font.PLAIN, fontSize)
-        val fontMetrics = svgGenerator.fontMetrics
-
-        for (row in 0 until rows) {
-            for (col in 0 until cols) {
-                val char = alignment[row][col]
-                val x = padding + col * cellSize
-                val y = padding + row * cellSize
-
-                val columnChars = alignment.map { it[col] }
-
-                val color = when {
-                    columnChars.all { it == '-' } -> Color.LIGHT_GRAY
-                    columnChars.distinct().size == 1 -> Color(180, 238, 180)  // Greenish
-                    char == '-' -> Color(220, 220, 220)
-                    else -> Color(255, 160, 160)  // Reddish
-                }
-
-                // Draw background
-                svgGenerator.color = color
-                svgGenerator.fillRect(x, y, cellSize, cellSize)
-
-                // Draw border
-                svgGenerator.color = Color.DARK_GRAY
-                svgGenerator.drawRect(x, y, cellSize, cellSize)
-
-                // Draw character
-                val textWidth = fontMetrics.stringWidth(char.toString())
-                val textHeight = fontMetrics.ascent
-                val textX = x + (cellSize - textWidth) / 2
-                val textY = y + (cellSize + textHeight) / 2 - 4
-
-                svgGenerator.color = Color.BLACK
-                svgGenerator.drawString(char.toString(), textX, textY)
-            }
-        }
-
-        // Save to file
-        FileWriter(filePath).use { writer ->
-            svgGenerator.stream(writer, true)
-        }
-
-        println("SVG saved to: ${filePath.absolutePath}")
-    }
-
-    fun showMSAVisualization(alignedSequences: List<String>, similarityPercent: Double) {
-        if (alignedSequences.isEmpty()) return
-
-        val rows = alignedSequences.size
-        val cols = alignedSequences.maxOf { it.length }
-        val cellSize = 40
-        val fontSize = 18
-
-        var matches = 0
-        var validCols = 0
-        for (j in 0 until cols) {
-            val column = alignedSequences.mapNotNull { it.getOrNull(j) }.filter { it != '-' }
-            if (column.isNotEmpty()) {
-                validCols++
-                if (column.distinct().size == 1) matches++
-            }
-        }
-
-        val panel = object : JPanel() {
-            override fun getPreferredSize(): Dimension {
-                return Dimension(cols * cellSize + 100, rows * cellSize + 100)
-            }
-
-            override fun paintComponent(g: Graphics) {
-                super.paintComponent(g)
-                val g2 = g as Graphics2D
-                g2.font = Font("JetBrains Mono", Font.PLAIN, fontSize)
-
-                for (i in 0 until rows) {
-                    val seq = alignedSequences[i]
-                    for (j in 0 until cols) {
-                        val c = if (j < seq.length) seq[j] else ' '
-                        val isGap = c == '-'
-                        val isMatch = !isGap && alignedSequences.all { it.length > j && it[j] == c }
-
-                        val x = j * cellSize + 50
-                        val y = i * cellSize + 50
-
-                        g2.color = when {
-                            isGap -> Color.LIGHT_GRAY
-                            isMatch -> Color(144, 238, 144)
-                            else -> Color(255, 182, 193)
-                        }
-
-                        g2.fillRect(x, y, cellSize, cellSize)
-                        g2.color = Color.BLACK
-                        g2.drawRect(x, y, cellSize, cellSize)
-                        g2.drawString(c.toString(), x + cellSize / 3, y + cellSize / 2 + 6)
-                    }
-                }
-            }
-        }
-
-        val scrollPane = JScrollPane(panel)
-        scrollPane.preferredSize = Dimension(800, 600)
-
-        // Identity label
-        val identityLabel = JLabel("Identity: %.2f%%".format(similarityPercent))
-        identityLabel.font = Font("SansSerif", Font.BOLD, 16)
-        identityLabel.horizontalAlignment = SwingConstants.CENTER
-        identityLabel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
-
-        val container = JPanel(BorderLayout())
-        container.add(identityLabel, BorderLayout.NORTH)
-        container.add(scrollPane, BorderLayout.CENTER)
-
-        val frame = JFrame("MSA Visualization")
-        frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-        frame.contentPane = container
-        frame.pack()
-        frame.setLocationRelativeTo(null)
-        frame.isVisible = true
-    }
-
-    fun saveAlignmentResultToFile(result: MultipleAlignmentResult, file: File) {
-        file.printWriter().use { out ->
-            out.println("Multiple Sequence Alignment Result")
-            out.println("=================================")
-            result.alignedSequences.forEachIndexed { idx, seq ->
-                out.println("Sequence ${idx + 1}: $seq")
-            }
-            out.println()
-            out.println("Identity: %.2f%%".format(result.identity))
-            out.println("Gaps: ${result.gapCount}")
-            out.println("Final Score: ${result.score}")
+    fun exportAlignmentReportToPDF() {
+        alignmentResult.value?.let { result ->
+            DocumentManager.generateMSAReport(result)
         }
     }
+    fun exportAlignmentImageToSVG() {
+        alignmentResult.value?.let { result ->
+            DocumentManager.generateAlignmentSVG(result.alignedSequences, result.identity, result.gapCount, result.score)
+        }
+    }
+
+    fun showVisualization() {
+        alignmentResult.value?.let { result ->
+            DocumentManager.showMSAVisualization(result.alignedSequences, result.identity)
+        }
+    }
+
+
+
 
 
 
